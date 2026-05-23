@@ -31,6 +31,11 @@ const App = {
     },
 
     handleRoute() {
+        if (this.scrollspyObserver) {
+            this.scrollspyObserver.disconnect();
+            this.scrollspyObserver = null;
+        }
+
         const hash = window.location.hash || "#/process";
         const root = document.getElementById("content-root");
 
@@ -50,6 +55,8 @@ const App = {
             this.renderExamplesPage(root, "examples-b2b-sales");
         } else if (hash.startsWith("#/examples/marketing")) {
             this.renderExamplesPage(root, "examples-marketing");
+        } else if (hash.startsWith("#/examples/pm")) {
+            this.renderExamplesPage(root, "examples-pm");
         } else if (hash.startsWith("#/examples/hr") || hash.startsWith("#/examples")) {
             this.renderExamplesPage(root, "examples");
         } else {
@@ -340,11 +347,31 @@ const App = {
         }
 
         container.innerHTML = `
-            <article class="markdown-body">
-                ${this.renderMarkdown(content)}
-            </article>
+            <div class="static-page-layout">
+                <article class="markdown-body" id="static-article">
+                    ${this.renderMarkdown(content)}
+                </article>
+                <aside class="toc-panel collapsed" id="static-toc-panel" aria-label="Table of contents">
+                    <div class="toc-mobile-header" onclick="App.toggleMobileTOC('static-toc-panel')">
+                        <span><i data-lucide="list"></i>목차 탐색</span>
+                        <i data-lucide="chevron-down" class="toc-toggle-icon"></i>
+                    </div>
+                    <div class="toc-title">
+                        <i data-lucide="list"></i>
+                        <span>목차</span>
+                    </div>
+                    <ul class="toc-list" id="static-toc-list">
+                        <!-- 동적으로 주입됨 -->
+                    </ul>
+                </aside>
+            </div>
         `;
 
+        const article = document.getElementById("static-article");
+        this.postProcessContent(article);
+        const tocList = document.getElementById("static-toc-list");
+        this.buildTOC(article, tocList);
+        this.initScrollspy(article, tocList);
         this.refreshIcons();
     },
 
@@ -353,7 +380,8 @@ const App = {
         const items = [
             { id: "examples", href: "#/examples/hr", label: "HR AI Agent Idea" },
             { id: "examples-b2b-sales", href: "#/examples/b2b-sales", label: "B2B Sales AI Agent Idea" },
-            { id: "examples-marketing", href: "#/examples/marketing", label: "Marketing AI Agent Idea" }
+            { id: "examples-marketing", href: "#/examples/marketing", label: "Marketing AI Agent Idea" },
+            { id: "examples-pm", href: "#/examples/pm", label: "PM AI Agent Idea" }
         ];
 
         if (!content) {
@@ -373,13 +401,218 @@ const App = {
                     <div class="examples-subnav-title">Examples</div>
                     ${subMenu}
                 </aside>
-                <article class="markdown-body examples-content">
+                <article class="markdown-body examples-content" id="examples-article">
                     ${this.renderMarkdown(content)}
                 </article>
+                <aside class="toc-panel" id="examples-toc-panel" aria-label="Table of contents">
+                    <div class="toc-title">
+                        <i data-lucide="list"></i>
+                        <span>목차</span>
+                    </div>
+                    <ul class="toc-list" id="examples-toc-list">
+                        <!-- 동적으로 주입됨 -->
+                    </ul>
+                </aside>
             </div>
         `;
 
+        const article = document.getElementById("examples-article");
+        this.postProcessContent(article);
+        const tocList = document.getElementById("examples-toc-list");
+        this.buildTOC(article, tocList);
+        this.initScrollspy(article, tocList);
         this.refreshIcons();
+    },
+
+    buildTOC(articleElement, tocContainer) {
+        if (!articleElement || !tocContainer) return;
+
+        const headers = articleElement.querySelectorAll("h2, h3");
+        tocContainer.innerHTML = "";
+
+        if (headers.length === 0) {
+            const panel = tocContainer.closest(".toc-panel");
+            if (panel) panel.style.display = "none";
+            return;
+        }
+
+        headers.forEach((header, index) => {
+            if (!header.id) {
+                const rawText = header.textContent || "";
+                const cleanText = rawText
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9가-힣\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                header.id = cleanText ? `sec-${cleanText}-${index}` : `sec-${index}`;
+            }
+
+            const item = document.createElement("li");
+            item.className = "toc-item";
+
+            const link = document.createElement("a");
+            link.href = `#${header.id}`;
+            link.className = `toc-link toc-depth-${header.tagName.toLowerCase() === "h2" ? "2" : "3"}`;
+            link.textContent = header.textContent;
+
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                header.scrollIntoView({ behavior: "smooth" });
+
+                const panel = tocContainer.closest(".toc-panel");
+                if (panel && panel.classList.contains("toc-panel") && !panel.classList.contains("collapsed")) {
+                    panel.classList.add("collapsed");
+                    const icon = panel.querySelector(".toc-toggle-icon");
+                    if (icon) icon.setAttribute("data-lucide", "chevron-down");
+                    this.refreshIcons();
+                }
+            });
+
+            item.appendChild(link);
+            tocContainer.appendChild(item);
+        });
+    },
+
+    initScrollspy(articleElement, tocContainer) {
+        if (!articleElement || !tocContainer || !window.IntersectionObserver) return;
+
+        if (this.scrollspyObserver) {
+            this.scrollspyObserver.disconnect();
+        }
+
+        const headers = articleElement.querySelectorAll("h2, h3");
+        if (headers.length === 0) return;
+
+        const links = tocContainer.querySelectorAll(".toc-link");
+
+        this.scrollspyObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const targetId = entry.target.id;
+                    links.forEach((link) => {
+                        const href = link.getAttribute("href");
+                        if (href === `#${targetId}`) {
+                            link.classList.add("active");
+                        } else {
+                            link.classList.remove("active");
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: "-64px 0px -80% 0px"
+        });
+
+        headers.forEach((header) => {
+            this.scrollspyObserver.observe(header);
+        });
+    },
+
+    toggleMobileTOC(panelId) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+
+        const isCollapsed = panel.classList.contains("collapsed");
+        const icon = panel.querySelector(".toc-toggle-icon");
+
+        if (isCollapsed) {
+            panel.classList.remove("collapsed");
+            if (icon) icon.setAttribute("data-lucide", "chevron-up");
+        } else {
+            panel.classList.add("collapsed");
+            if (icon) icon.setAttribute("data-lucide", "chevron-down");
+        }
+        this.refreshIcons();
+    },
+
+    postProcessContent(container) {
+        if (!container) return;
+
+        // 1. Callout Box (Admonition) 변환
+        const blockquotes = container.querySelectorAll("blockquote");
+        blockquotes.forEach((bq) => {
+            const p = bq.querySelector("p");
+            if (!p) return;
+
+            const text = p.innerHTML;
+            const match = text.match(/^\[!(NOTE|TIP|WARNING|IMPORTANT|CAUTION)\](?:\s|<br>|\n)*(.*)/si);
+            
+            if (match) {
+                const type = match[1].toUpperCase();
+                const content = match[2];
+                
+                bq.className = `callout-box callout-${type.toLowerCase()}`;
+                
+                let iconName = "info";
+                let titleText = "NOTE";
+                
+                if (type === "TIP") {
+                    iconName = "lightbulb";
+                    titleText = "TIP";
+                } else if (type === "WARNING") {
+                    iconName = "alert-triangle";
+                    titleText = "WARNING";
+                } else if (type === "IMPORTANT") {
+                    iconName = "alert-circle";
+                    titleText = "IMPORTANT";
+                } else if (type === "CAUTION") {
+                    iconName = "flame";
+                    titleText = "CAUTION";
+                }
+
+                p.innerHTML = `
+                    <div class="callout-header">
+                        <i data-lucide="${iconName}"></i>
+                        <span>${titleText}</span>
+                    </div>
+                    <div class="callout-content">${content}</div>
+                `;
+            }
+        });
+
+        // 2. Code Block 복사 기능 및 스타일 클래스 부여
+        const preElements = container.querySelectorAll("pre");
+        preElements.forEach((pre) => {
+            const code = pre.querySelector("code");
+            if (!code) return;
+
+            pre.classList.add("code-block-wrapper");
+
+            // 중복 생성 방지
+            if (pre.querySelector(".code-copy-btn")) return;
+
+            const copyBtn = document.createElement("button");
+            copyBtn.type = "button";
+            copyBtn.className = "code-copy-btn";
+            copyBtn.title = "Copy Code";
+            copyBtn.innerHTML = '<i data-lucide="copy"></i>';
+
+            copyBtn.addEventListener("click", () => {
+                const textToCopy = code.textContent || "";
+                const originalInner = copyBtn.innerHTML;
+
+                const markSuccess = () => {
+                    copyBtn.innerHTML = '<i data-lucide="check"></i>';
+                    copyBtn.classList.add("copied");
+                    this.refreshIcons();
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalInner;
+                        copyBtn.classList.remove("copied");
+                        this.refreshIcons();
+                    }, 1800);
+                };
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy).then(markSuccess).catch(() => {
+                        this.copyWithFallback(textToCopy, markSuccess);
+                    });
+                } else {
+                    this.copyWithFallback(textToCopy, markSuccess);
+                }
+            });
+
+            pre.appendChild(copyBtn);
+        });
     },
 
     refreshIcons() {

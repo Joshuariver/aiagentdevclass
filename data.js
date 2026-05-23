@@ -1978,6 +1978,303 @@ Marketing AI Agent는 캠페인 기획, 콘텐츠 제작, 고객 세분화, 성�
 - 산출물이 명확하다.
 - 사람이 최종 승인하기 쉽다.
 - 실패해도 고객 피해가 작다.
-- 캠페인 실행 전 QA 체크리스트로 검증 가능하다.`
+- 캠페인 실행 전 QA 체크리스트로 검증 가능하다.`,
+
+        "examples-pm": `# PM AI Agent Ideas & Examples
+
+## 개요
+
+이 페이지는 설치된 PM Skills 패키지(pm-execution, pm-product-discovery, pm-product-strategy, pm-market-research, pm-data-analytics, pm-go-to-market, pm-marketing-growth)를 기반으로, Product Manager가 실무에서 만들 수 있는 AI Agent 아이디어를 정리합니다.
+
+설계 원칙은 다음 세 가지입니다.
+
+1. 각 Agent는 특정 PM Skill과 1:1로 대응하거나, 복수의 Skill을 워크플로로 연결한다.
+2. AI는 판단 보조·초안 작성·패턴 탐색에 집중하고, 최종 의사결정은 PM이 한다.
+3. 산출물은 실행에 바로 쓸 수 있는 형태(PRD, 스프린트 계획, GTM 브리프 등)로 만든다.
+
+## 1. 제품 기획 실행 / Product Execution
+
+### 1-1. PRD 작성 Agent
+
+- 대상: Product Manager, 스쿼드 리드
+- 목적: 문제 정의부터 출시 계획까지 8섹션 PRD를 빠르게 초안화
+- 입력: 제품/기능 설명, 목표 사용자, 해결할 문제, 제약 조건
+- 출력: 요약, 목표·지표, 사용자 세그먼트, 가치 제안, 솔루션 설계, 범위 정의, 수용 기준, 출시 계획
+- 연계 Skill: pm-execution / create-prd
+- 설계 주의: AI가 비즈니스 가정을 임의로 채우지 않도록 확인 질문을 먼저 받는 단계를 추가한다.
+
+### 1-2. 스프린트 계획 Agent
+
+- 대상: PM, 스크럼 마스터
+- 목적: 백로그 항목과 팀 Capacity를 기반으로 스프린트 계획을 수립
+- 입력: 백로그 항목 목록, 팀원 수·가용 시간, 스프린트 목표, 이전 Velocity
+- 출력: 스프린트 목표 문장, 선택된 스토리 목록과 포인트, Capacity 계산, 리스크 및 의존성
+- 연계 Skill: pm-execution / sprint-plan
+
+### 1-3. OKR 설계 Agent
+
+- 대상: 팀 리더, CPO, PM
+- 목적: 회사 OKR에 정렬된 팀 레벨 OKR 초안 생성 및 품질 점검
+- 입력: 회사 목표, 팀 역할, 전략적 우선순위, 이전 분기 성과
+- 출력: Objective 3개 후보, 각 Objective에 대한 KR 2~3개, 정렬 여부 체크, 모호한 표현 지적
+- 연계 Skill: pm-execution / brainstorm-okrs
+
+### 1-4. 사용자 스토리 생성 Agent
+
+- 대상: PM, PO, 개발팀
+- 목적: 기능 아이디어를 실행 가능한 사용자 스토리와 수용 기준으로 변환
+- 입력: 기능 설명, 대상 사용자, 예상 가치
+- 출력: "As a [사용자], I want [기능], so that [가치]" 형식의 스토리, Given-When-Then 수용 기준, 우선순위 제안
+- 연계 Skill: pm-execution / user-stories, wwas
+
+### 1-5. 사전 부검(Pre-mortem) Agent
+
+- 대상: 출시를 앞둔 PM, 스쿼드
+- 목적: 출시 전에 가상의 실패 시나리오를 생성하고 리스크 완화 액션을 도출
+- 입력: PRD 또는 출시 계획 요약, 타임라인, 팀 구성
+- 출력: 실패 시나리오 5~7개, 각 시나리오의 발생 가능성·영향도, 완화 액션 목록
+- 연계 Skill: pm-execution / pre-mortem
+
+### 1-6. 아웃컴 로드맵 변환 Agent
+
+- 대상: PM, 전략팀
+- 목적: 기능 중심 로드맵을 비즈니스 성과(Outcome) 중심으로 재구성
+- 입력: 기존 기능 로드맵, 비즈니스 목표, 타깃 지표
+- 출력: Outcome별 기능 그룹화, 각 기능과 Outcome의 연결 논리, 우선순위 재조정 제안
+- 연계 Skill: pm-execution / outcome-roadmap
+
+## 2. 제품 발견 / Product Discovery
+
+### 2-1. 아이디어 발굴 Agent (신규 제품)
+
+- 대상: 초기 스타트업 PM, 사내 신사업 팀
+- 목적: 새로운 제품 아이디어를 PM·디자이너·엔지니어 세 관점에서 동시에 발굴
+- 입력: 타깃 세그먼트, 기회 영역, 원하는 성과
+- 출력: 각 관점별 5개 기능 아이디어, 시장 적합성 가설, 검증이 필요한 가정 목록
+- 연계 Skill: pm-product-discovery / brainstorm-ideas-new
+
+### 2-2. 기존 제품 개선 아이디어 Agent
+
+- 대상: 성장 단계 PM
+- 목적: 기존 제품의 데이터와 사용자 피드백을 분석해 개선 기회를 발굴
+- 입력: 현재 제품 설명, 사용자 피드백, 주요 지표 현황, 경쟁사 동향
+- 출력: 문제 영역별 개선 아이디어, 빠르게 실험할 수 있는 아이템, 중장기 기회 항목
+- 연계 Skill: pm-product-discovery / brainstorm-ideas-existing
+
+### 2-3. 가정 식별 및 우선순위 Agent
+
+- 대상: Product Discovery 단계의 PM
+- 목적: 제품 아이디어에 내재된 위험한 가정을 찾아내고 검증 우선순위를 결정
+- 입력: 제품 아이디어 또는 기능 설명
+- 출력: 가정 목록(사용자·시장·기술·비즈니스 모델), Impact x Risk 매트릭스, 검증 방법 제안
+- 연계 Skill: pm-product-discovery / identify-assumptions-new, prioritize-assumptions
+
+### 2-4. 고객 인터뷰 스크립트 & 요약 Agent
+
+- 대상: 사용자 리서치를 진행하는 PM, UX Researcher
+- 목적: 구조화된 인터뷰 스크립트를 생성하고, 인터뷰 후 핵심 인사이트를 요약
+- 입력(스크립트): 리서치 목표, 타깃 사용자, 검증하려는 가설
+- 출력(스크립트): 오프닝·메인 질문·심화 프로브·클로징으로 구성된 60분 스크립트
+- 입력(요약): 인터뷰 녹취 또는 노트
+- 출력(요약): 핵심 Pain Point, 인용구, 패턴, 다음 스텝
+- 연계 Skill: pm-product-discovery / interview-script, summarize-interview
+
+### 2-5. 기회-솔루션 트리(OST) 구축 Agent
+
+- 대상: Product Discovery를 구조화하려는 PM
+- 목적: 비즈니스 목표에서 기회, 솔루션, 실험까지의 연결 구조를 시각적으로 설계
+- 입력: 비즈니스 목표, 사용자 Pain Point 목록, 기존 솔루션 아이디어
+- 출력: OST 계층 구조(목표-기회-솔루션-실험), 각 노드의 연결 근거, 우선순위 제안
+- 연계 Skill: pm-product-discovery / opportunity-solution-tree
+
+### 2-6. 지표 대시보드 설계 Agent
+
+- 대상: 데이터 기반 의사결정을 원하는 PM
+- 목적: North Star Metric과 Input Metric을 중심으로 제품 지표 대시보드를 설계
+- 입력: 제품 설명, 비즈니스 목표, 현재 추적 중인 지표
+- 출력: North Star Metric, Input Metric 3~5개, 가드레일 지표, 대시보드 레이아웃 제안
+- 연계 Skill: pm-product-discovery / metrics-dashboard
+
+## 3. 제품 전략 / Product Strategy
+
+### 3-1. Lean Canvas 작성 Agent
+
+- 대상: 창업자, 사내 신사업 PM
+- 목적: 사업 가설 전체를 1페이지 Lean Canvas로 구조화
+- 입력: 제품/서비스 설명, 타깃 고객, 시장 맥락
+- 출력: 문제·솔루션·고유 가치 제안·경쟁 우위·채널·고객 세그먼트·비용·수익·핵심 지표 9개 섹션
+- 연계 Skill: pm-product-strategy / lean-canvas
+
+### 3-2. SWOT·PESTLE 분석 Agent
+
+- 대상: 전략 기획 PM, 사업 개발팀
+- 목적: 외부 환경과 내부 역량을 구조적으로 분석해 전략적 시사점 도출
+- 입력: 회사/제품 설명, 산업, 주요 경쟁사
+- 출력: SWOT 4분면 분석, PESTLE 6개 요인 분석, 전략적 시사점 3~5가지
+- 연계 Skill: pm-product-strategy / swot-analysis, pestle-analysis
+
+### 3-3. 제품 비전 수립 Agent
+
+- 대상: CPO, 스쿼드 리드
+- 목적: 팀 전체가 공유할 수 있는 영감 있는 제품 비전 문장을 도출
+- 입력: 타깃 고객, 해결할 문제, 3~5년 후 원하는 세계
+- 출력: 비전 문장 3개 후보, 각 문장의 강점/약점, 팀 공유용 1페이지 비전 스토리
+- 연계 Skill: pm-product-strategy / product-vision
+
+### 3-4. 가격 전략 설계 Agent
+
+- 대상: PM, 마케팅팀, 수익화 담당자
+- 목적: 경쟁사 가격·고객 지불 의사·비용 구조를 종합해 가격 전략 옵션을 도출
+- 입력: 제품 설명, 타깃 고객, 경쟁사 가격, 비용 구조, 목표 수익
+- 출력: 추천 가격 모델(구독/단건/프리미엄 등), 가격 포인트 3개 시나리오, Pricing Page 구성 제안
+- 연계 Skill: pm-product-strategy / pricing-strategy
+
+## 4. 시장 조사 / Market Research
+
+### 4-1. 경쟁사 분석 Agent
+
+- 대상: PM, 사업 개발팀
+- 목적: 주요 경쟁사의 강점·약점·포지셔닝·차별화 기회를 체계적으로 분석
+- 입력: 자사 제품 설명, 경쟁사 목록 또는 산업명
+- 출력: 경쟁사별 Positioning Map, 강점·약점 비교표, 차별화 기회 3가지, 전략적 대응 옵션
+- 연계 Skill: pm-market-research / competitor-analysis
+
+### 4-2. 고객 여정 지도(CJM) 작성 Agent
+
+- 대상: PM, UX Designer, CX팀
+- 목적: 사용자의 전체 경험 흐름을 단계별로 매핑하고 마찰 포인트를 식별
+- 입력: 타깃 페르소나, 제품/서비스 시나리오, 알려진 Pain Point
+- 출력: 인지-탐색-사용-재사용 단계별 행동·감정·Pain Point·기회, 우선 개선 영역
+- 연계 Skill: pm-market-research / customer-journey-map
+
+### 4-3. 시장 규모 추정 Agent
+
+- 대상: 신사업 기획자, 투자 검토 PM
+- 목적: TAM-SAM-SOM 방법론으로 시장 기회 규모를 추정
+- 입력: 제품/서비스 설명, 타깃 지역, 산업 카테고리
+- 출력: TAM·SAM·SOM 수치와 계산 근거, 성장률 가정, 3년 후 시장 전망
+- 연계 Skill: pm-market-research / market-sizing
+
+### 4-4. 사용자 페르소나 생성 Agent
+
+- 대상: PM, 디자이너, 마케터
+- 목적: 리서치 데이터를 바탕으로 실행 가능한 사용자 페르소나를 생성
+- 입력: 인터뷰 노트, 설문 결과, 사용자 행동 데이터
+- 출력: 페르소나 카드(이름·직업·목표·Pain Point·행동 패턴·기술 수준), 페르소나별 설계 시사점
+- 연계 Skill: pm-market-research / user-personas, user-segmentation
+
+### 4-5. 피드백 감성 분석 Agent
+
+- 대상: PM, CS팀, 리서처
+- 목적: 대량의 사용자 피드백에서 주제별 감성·패턴·우선순위를 자동 분석
+- 입력: 앱스토어 리뷰, NPS 코멘트, 인터뷰 노트, 설문 텍스트
+- 출력: 긍정/부정/중립 분류, 주요 테마 목록, 빈도·심각도 매트릭스, 빠른 개선 우선순위
+- 연계 Skill: pm-market-research / sentiment-analysis
+
+## 5. 데이터 분석 / Data Analytics
+
+### 5-1. A/B 테스트 결과 분석 Agent
+
+- 대상: Growth PM, 데이터 분석가
+- 목적: A/B 테스트 결과를 통계적으로 해석하고 의사결정을 지원
+- 입력: Control·Variant의 전환율/수치, 샘플 수, 테스트 기간
+- 출력: 통계적 유의성 판단, 신뢰 구간, 비즈니스 임팩트 추정, 출시 여부 권고
+- 연계 Skill: pm-data-analytics / ab-test-analysis
+- 설계 주의: 통계 결론을 AI가 최종 결정처럼 제시하지 않도록 반드시 PM 검토 단계를 설계한다.
+
+### 5-2. 코호트 분석 Agent
+
+- 대상: Retention·Engagement를 개선하려는 PM
+- 목적: 가입 코호트별 유지율·행동 패턴을 분석해 이탈 원인을 파악
+- 입력: 사용자 행동 데이터(가입일, 이벤트, 날짜)
+- 출력: 코호트별 Retention 표, 이탈 변곡점, 상위 코호트의 행동 패턴 차이, 개선 가설
+- 연계 Skill: pm-data-analytics / cohort-analysis
+
+### 5-3. 자연어 SQL 쿼리 생성 Agent
+
+- 대상: SQL을 잘 모르는 PM, 비개발 기획자
+- 목적: 자연어 질문을 SQL로 변환해 데이터 분석 병목을 줄임
+- 입력: "지난달 신규 가입자의 7일 Retention은?" 같은 자연어 질문, 테이블 스키마
+- 출력: 실행 가능한 SQL 쿼리, 쿼리 로직 설명, 결과 해석 가이드
+- 연계 Skill: pm-data-analytics / sql-queries
+
+## 6. GTM 전략 / Go-to-Market
+
+### 6-1. GTM 전략 수립 Agent
+
+- 대상: 출시를 앞둔 PM, 마케팅팀
+- 목적: 제품 출시를 위한 채널·메시지·성공 지표·타임라인을 종합한 GTM 전략 문서 작성
+- 입력: 제품 설명, 타깃 시장, 경쟁 환경, 출시 일정
+- 출력: 채널 믹스, 포지셔닝 메시지, Launch 타임라인, 성공 지표, 첫 30/60/90일 액션 플랜
+- 연계 Skill: pm-go-to-market / gtm-strategy
+
+### 6-2. 경쟁 배틀카드 Agent
+
+- 대상: 영업팀, PM
+- 목적: 경쟁사 주요 주장에 대한 Counter Message와 함정 질문을 생성
+- 입력: 자사 제품 강점, 경쟁사 포지셔닝, 자주 나오는 반대 논리
+- 출력: 경쟁사 주장 - 자사 Counter Message 매핑, 리스크 폭로 질문, 필요 증빙 자료 목록
+- 연계 Skill: pm-go-to-market / competitive-battlecard
+
+### 6-3. 성장 루프 설계 Agent
+
+- 대상: Growth PM, 사업 개발팀
+- 목적: 지속 가능한 제품 성장 메커니즘(플라이휠)을 설계
+- 입력: 제품 설명, 현재 주요 획득 채널, 사용자 행동 데이터
+- 출력: 바이럴·콘텐츠·유료·제품 주도 성장 루프 후보, 각 루프의 핵심 레버와 병목 지점
+- 연계 Skill: pm-go-to-market / growth-loops
+
+### 6-4. 이상적인 고객 프로파일(ICP) 정의 Agent
+
+- 대상: B2B PM, 영업·마케팅팀
+- 목적: 전환율·유지율이 가장 높은 고객군의 공통 속성을 파악해 ICP를 정의
+- 입력: 기존 고객 데이터, Win/Loss 분석, 영업팀 피드백
+- 출력: ICP 속성 프로파일(산업·규모·Pain Point·예산·의사결정 구조), ICP vs Non-ICP 비교표
+- 연계 Skill: pm-go-to-market / ideal-customer-profile
+
+## 7. 마케팅 성장 / Marketing Growth
+
+### 7-1. North Star Metric 정의 Agent
+
+- 대상: PM, 데이터 팀 리더
+- 목적: 팀 전체가 정렬할 수 있는 단일 North Star Metric과 3~5개 Input Metric을 설계
+- 입력: 비즈니스 목표, 제품 카테고리, 현재 추적 중인 지표
+- 출력: North Star Metric 후보와 선택 근거, Input Metric 목록, Metric이 움직였을 때 해야 할 일 플레이북
+- 연계 Skill: pm-marketing-growth / north-star-metric
+
+### 7-2. 가치 제안 문장 생성 Agent
+
+- 대상: PM, 마케터, 카피라이터
+- 목적: 타깃 고객의 언어로 제품 가치를 전달하는 포지셔닝 문장을 여러 버전으로 생성
+- 입력: 제품 설명, 타깃 고객, 경쟁 대안, 핵심 차별점
+- 출력: 포지셔닝 문장 5개, Tagline 3개, LP 헤드라인 3개
+- 연계 Skill: pm-marketing-growth / value-prop-statements, positioning-ideas
+
+### 7-3. 마케팅 아이디어 브레인스토밍 Agent
+
+- 대상: Growth PM, 마케터
+- 목적: 예산·채널·타이밍에 맞는 창의적 마케팅 아이디어를 빠르게 발산
+- 입력: 제품 설명, 타깃 오디언스, 예산 범위, 캠페인 목표
+- 출력: 비용 효율 높은 마케팅 아이디어 5개, 각 아이디어의 채널·메시지·예상 효과·측정 지표
+- 연계 Skill: pm-marketing-growth / marketing-ideas
+
+## PM AI Agent 설계 시 공통 주의사항
+
+> [!WARNING]
+> AI가 최종 의사결정을 내리도록 설계하지 않는다. PM Skills Agent는 항상 초안·보조·분석의 역할을 하고, 전략적 판단과 승인은 사람이 한다.
+
+> [!CAUTION]
+> 고객 데이터·계약 정보·가격 정책 등 기밀 문서를 AI에 직접 입력하지 않는다. 익명화하거나 샘플 데이터를 사용한다.
+
+> [!NOTE]
+> 각 Agent는 단독으로도 사용할 수 있지만, PRD - 스프린트 계획 - A/B 테스트 - 코호트 분석처럼 단계별로 연결하면 더 큰 가치를 만든다.
+
+## 좋은 첫 PM Agent 프로젝트 기준
+
+- AI가 초안을 만들고 PM이 검토·수정하는 구조가 명확하다.
+- 산출물 형식이 정해져 있어 AI 결과를 바로 협업 도구에 붙여 쓸 수 있다.
+- 개인정보·기밀 데이터 없이 샘플로 충분히 시연 가능하다.
+- 실패해도 전략 방향이 틀어지는 것이 아니라 초안 품질 저하 수준으로 영향이 제한된다.
+- 다음 단계 Agent와 자연스럽게 연결되는 인풋-아웃풋 구조를 갖는다.`
     }
 };
