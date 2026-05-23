@@ -25,7 +25,7 @@ AI Agent 개발 절차와 관련 개념을 학습하기 위한 정적 웹앱입�
 권장 방식입니다.
 
 ```bash
-cd app1
+cd app4
 python -m http.server 8000
 ```
 
@@ -38,9 +38,9 @@ http://localhost:8000
 ## 파일 구조
 
 ```text
-app1/
+app4/
 ├── index.html   # 앱 진입점
-├── style.css    # 화면 스타일
+├── style.css    # 오렌지·노랑·파랑 배색 기반 업그레이드 화면 스타일
 ├── app.js       # 라우팅, 렌더링, 모달, 복사 기능
 ├── data.js      # 화면 콘텐츠 데이터
 ├── README.md    # 앱 설명 문서
@@ -70,4 +70,4 @@ node --check data.js
 
 정적 파일만으로 동작하므로 GitHub Pages, Netlify, Vercel, 사내 정적 웹서버 등에 그대로 배포할 수 있습니다.
 
-GitHub Pages 배포 시 `app1` 폴더 내부 파일들을 배포 루트로 사용하세요.
+GitHub Pages 배포 시 `app4` 폴더 내부 파일들을 배포 루트로 사용하세요.
