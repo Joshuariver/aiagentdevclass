@@ -10,8 +10,79 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    App.init();
+    AuthGate.init(() => App.init());
 });
+
+const AuthGate = {
+    password: "5880",
+    storageKey: "app5-authenticated",
+
+    async init(onAuthenticated) {
+        await this.loadPassword();
+        this.refreshIcons();
+
+        if (sessionStorage.getItem(this.storageKey) === "true") {
+            this.unlock(onAuthenticated);
+            return;
+        }
+
+        const form = document.getElementById("auth-form");
+        const input = document.getElementById("auth-password");
+        const toggle = document.getElementById("auth-toggle");
+        const error = document.getElementById("auth-error");
+
+        toggle.addEventListener("click", () => {
+            const isHidden = input.type === "password";
+            input.type = isHidden ? "text" : "password";
+            toggle.setAttribute("aria-label", isHidden ? "비밀번호 숨기기" : "비밀번호 보기");
+            toggle.innerHTML = `<i data-lucide="${isHidden ? "eye-off" : "eye"}"></i>`;
+            this.refreshIcons();
+            input.focus();
+        });
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            if (input.value === this.password) {
+                sessionStorage.setItem(this.storageKey, "true");
+                this.unlock(onAuthenticated);
+                return;
+            }
+
+            error.hidden = false;
+            input.value = "";
+            input.focus();
+        });
+    },
+
+    async loadPassword() {
+        try {
+            const response = await fetch("./.env", { cache: "no-store" });
+            if (!response.ok) return;
+
+            const envText = await response.text();
+            const match = envText.match(/^\s*APP_PASSWORD\s*=\s*(.+?)\s*$/m);
+            if (match && match[1]) {
+                this.password = match[1].trim().replace(/^['\"]|['\"]$/g, "");
+            }
+        } catch (error) {
+            // 로컬 파일로 직접 열면 fetch가 차단될 수 있어 기본값(5880)을 사용합니다.
+        }
+    },
+
+    unlock(onAuthenticated) {
+        document.body.classList.remove("auth-locked");
+        const gate = document.getElementById("auth-gate");
+        if (gate) gate.remove();
+        onAuthenticated();
+    },
+
+    refreshIcons() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+};
 
 const App = {
     init() {
